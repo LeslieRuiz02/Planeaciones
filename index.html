@@ -73,14 +73,6 @@
             border-color: var(--primary);
         }
 
-        .api-box {
-            background-color: #ede7f6;
-            border: 1px dashed var(--ai-color);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
         .pda-container {
             background-color: #f9f9f9;
             padding: 10px;
@@ -144,13 +136,7 @@
 <body>
 
 <div class="container">
-    <h1>📝 Planeador de Preescolar NEM con Inteligencia Artificial</h1>
-
-    <div class="api-box">
-        <label style="color: var(--ai-color);">🔑 Configuración de Inteligencia Artificial:</label>
-        <p style="margin: 5px 0; font-size: 0.85rem; color: #5e35b1;">Para usar el generador automático, ingresa tu API Key de Google Gemini. (Es gratuita desde Google AI Studio).</p>
-        <input type="password" id="apiKey" placeholder="Pega aquí tu API Key (AIzaSy...)">
-    </div>
+    <h1>📝 Planeador de Preescolar NEM Inteligente</h1>
     
     <div class="grid">
         <div class="form-group">
@@ -213,7 +199,7 @@
                 <option value="Aprendizaje Basado en Indagación (STEAM)">🚀 Indagación bajo enfoque STEAM</option>
                 <option value="Aprendizaje Basado en Problemas (ABP)">🧩 Aprendizaje Basado en Problemas (ABP)</option>
                 <option value="Aprendizaje Servicio (AS)">❤️ Aprendizaje Servicio (AS)</option>
-                <option value="Enfoque integrado (Sin metodología sociocrítica)">⚪ Secuencia Integrada</option>
+                <option value="Enfoque integrado">⚪ Secuencia Integrada</option>
             </select>
         </div>
     </div>
@@ -235,12 +221,12 @@
 
     <div class="form-group" style="margin-top: 15px;">
         <label>Secuencia Didáctica (Inicio, Desarrollo, Cierre):</label>
-        <textarea id="secuencia" style="height: 150px;" placeholder="Aquí aparecerá el resultado de la IA o puedes escribir manualmente..."></textarea>
+        <textarea id="secuencia" style="height: 150px;" placeholder="El resultado de la IA aparecerá aquí automáticamente..."></textarea>
     </div>
 
     <div class="form-group">
         <label>Estrategias de Evaluación Formativa y Ajustes Razonables (DUA):</label>
-        <textarea id="evaluacion" style="height: 100px;" placeholder="Aquí aparecerán las estrategias DUA y evaluación de la IA..."></textarea>
+        <textarea id="evaluacion" style="height: 100px;" placeholder="Las sugerencias de evaluación y DUA aparecerán aquí..."></textarea>
     </div>
 
     <button type="button" class="btn-primary" onclick="imprimirFormato()">💾 Generar Formato Final de Planeación</button>
@@ -252,26 +238,21 @@
 </div>
 
 <script>
-// Base de datos oficial ampliada para la Fase 2 de Preescolar
 const bancoDatos = {
     "Lenguajes": [
         { id: "L1", titulo: "Comunicación de necesidades, emociones, gustos, ideas y saberes, desde una perspectiva comunitaria.", pdas: ["1º - Expresa necesidades mediante gestos y sonidos.", "2º - Manifiesta ideas claras usando diversos lenguajes.", "3º - Expresa con precisión ideas ante sus pares."] },
         { id: "L2", titulo: "Narración de historias mediante diversos lenguajes y apropiación de la cultura escrita.", pdas: ["1º - Describe personajes de historias conocidas.", "2º - Narra historias inventadas con imágenes.", "3º - Cuenta mitos y leyendas con secuencia lógica."] },
-        { id: "L3", titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.", pdas: ["1º - Representa vivencias de forma corporal o plástica.", "2º - Elige colores y texturas para estados de ánimo.", "3º - Combina lenguajes artísticos para crear mundos."] },
-        { id: "L4", titulo: "Producciones gráficas dirigidas a diversos destinatarios, para establecer vínculos sociales.", pdas: ["1º - Produce trazos o dibujos con intención comunicativa.", "2º - Elabora recados o cartas con dictado al docente.", "3º - Planifica y organiza la escritura colectiva de textos."] }
+        { id: "L3", titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.", pdas: ["1º - Representa vivencias de forma corporal o plástica.", "2º - Elige colores y texturas para estados de ánimo.", "3º - Combina lenguajes artísticos para crear mundos."] }
     ],
     "Saberes y Pensamiento Científico": [
         { id: "S1", titulo: "Los saberes numéricos como herramienta para resolver situaciones del entorno.", pdas: ["1º - Dice los números en orden ascendente.", "2º - Cuenta colecciones fijas de elementos cotidianos.", "3º - Propone códigos numéricos para resolver juegos."] },
-        { id: "S2", titulo: "El dominio del espacio y reconocimiento de formas en el entorno.", pdas: ["1º - Usa referentes espaciales básicos para ubicarse.", "2º - Identifica formas geométricas en objetos reales.", "3º - Traza mapas y croquis simples del aula/comunidad."] },
-        { id: "S3", titulo: "Características de los objetos, materiales del entorno y de los seres vivos.", pdas: ["1º - Clasifica materiales por tamaño o textura.", "2º - Hace preguntas sobre los animales y las plantas.", "3º - Experimenta y registra cambios en elementos naturales."] }
+        { id: "S2", titulo: "El dominio del espacio y reconocimiento de formas en el entorno.", pdas: ["1º - Usa referentes espaciales básicos para ubicarse.", "2º - Identifica formas geométricas en objetos reales.", "3º - Traza mapas y croquis simples del aula/comunidad."] }
     ],
     "Ética, Naturaleza y Sociedades": [
-        { id: "E1", titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza.", pdas: ["1º - Manifiesta agrado al convivir al aire libre.", "2º - Propone soluciones al manejo de basura escolar.", "3º - Asume compromisos permanentes de cuidado ecológico."] },
-        { id: "E2", titulo: "Construcción de la identidad y pertenencia a una comunidad a partir de su historia y tradiciones.", pdas: ["1º - Narra costumbres de su núcleo familiar.", "2º - Participa con respeto en desfiles o festividades.", "3º - Conoce el origen de las leyendas e hitos locales."] }
+        { id: "E1", titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza.", pdas: ["1º - Manifiesta agrado al convivir al aire libre.", "2º - Propone soluciones al manejo de basura escolar.", "3º - Asume compromisos permanentes de cuidado ecológico."] }
     ],
     "De lo Humano y lo Comunitario": [
-        { id: "H1", titulo: "Construcción de la identidad personal y cuidado de sí.", pdas: ["1º - Nombra sus cualidades físicas básicas.", "2º - Distingue lo que puede hacer solo o con ayuda.", "3º - Expresa orgullo por sus raíces comunitarias."] },
-        { id: "H2", titulo: "Medidas de prevención de accidentes y situaciones de riesgo.", pdas: ["1º - Reconoce áreas de riesgo en casa y escuela.", "2º - Atiende reglas de seguridad ante emergencias.", "3º - Diseña y lee señalamientos de protección civil."] }
+        { id: "H1", titulo: "Construcción de la identidad personal y cuidado de sí.", pdas: ["1º - Nombra sus cualidades físicas básicas.", "2º - Distingue lo que puede hacer solo o con ayuda.", "3º - Expresa orgullo por sus raíces comunitarias."] }
     ]
 };
 
@@ -311,12 +292,9 @@ function actualizarPDAs() {
 }
 
 async function generarConIA() {
-    const apiKey = document.getElementById('apiKey').value;
-    if(!apiKey) { alert('Por favor, ingresa una API Key válida.'); return; }
-    
     const campo = document.getElementById('campo').value;
     const contenidoSel = document.getElementById('contenido').value;
-    if(!campo || !contenidoSel) { alert('Selecciona campo y contenido.'); return; }
+    if(!campo || !contenidoSel) { alert('Por favor, selecciona campo y contenido primero.'); return; }
     
     const contenido = bancoDatos[campo].find(c => c.id === contenidoSel).titulo;
     let pdas = [];
@@ -326,29 +304,26 @@ async function generarConIA() {
 
     document.getElementById('loading').style.display = 'block';
 
-    const promptText = `Eres un asesor metodológico experto en la Nueva Escuela Mexicana (NEM) y educación preescolar (Fase 2). 
-    Diseña para el proyecto titulado "${proyecto}" con la metodología "${met}". 
-    Campo: ${campo}. Contenido: ${contenido}. PDA seleccionados: ${pdas.join(', ')}.
-    
-    Entrega exclusivamente dos secciones separadas por la palabra "---":
-    Sección 1: Una secuencia didáctica lúdica detallada organizada en Inicio, Desarrollo y Cierre, adecuada para niños de jardín de niños.
-    Sección 2: Estrategias de evaluación formativa y ajustes razonables aplicando el Diseño Universal para el Aprendizaje (DUA).`;
-
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // Conexión directa a un servicio intermediario que procesa la IA de manera transparente
+        const response = await fetch('https://tu-servidor-intermedio.com/api/generar-planeacion', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+            body: JSON.stringify({
+                proyecto: proyecto,
+                metodologia: met,
+                campo: campo,
+                contenido: contenido,
+                pdas: pdas
+            })
         });
         
         const data = await response.json();
-        const textResult = data.candidates[0].content.parts[0].text;
-        const partes = textResult.split('---');
-
-        document.getElementById('secuencia').value = partes[0] ? partes[0].trim() : textResult;
-        document.getElementById('evaluacion').value = partes[1] ? partes[1].trim() : 'Revisar evaluación sugerida.';
+        
+        document.getElementById('secuencia').value = data.secuenciaDidactica;
+        document.getElementById('evaluacion').value = data.evaluacionDUA;
     } catch (error) {
-        alert('Hubo un error al conectar con la IA. Verifica tu API Key.');
+        alert('Hubo un problema al procesar con la Inteligencia Artificial. Inténtalo de nuevo.');
         console.error(error);
     } finally {
         document.getElementById('loading').style.display = 'none';
