@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Planeaciones NEM - Fase 2</title>
+    <style>
+        :root {
+            --primary: #d81b60; /* Rosa mexicano */
+            --secondary: #1e88e5; /* Azul claro */
+            --background: #fdf6f0; /* Fondo cálido claro */
+            --card-bg: #ffffff;
+            --text: #37474f;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 2px dashed #f48fb1;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #455a64;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 2px solid #cfd8dc;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #c2185b;
+        }
+
+        /* Estilo del resultado imprimible */
+        #output {
+            margin-top: 30px;
+            padding: 25px;
+            border: 2px solid #37474f;
+            background: #fff;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .print-btn {
+            background-color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        .print-btn:hover { background-color: #1565c0; }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .header-table td {
+            border: 1px solid #37474f;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 Generador de Planeaciones NEM (Preescolar)</h1>
+    
+    <div class="grid">
+        <div class="form-group">
+            <label>Nombre del Docente:</label>
+            <input type="text" id="docente" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+            <label>Nombre del Proyecto / Situación:</label>
+            <input type="text" id="proyecto" placeholder="Ej. Detectives de figuras">
+        </div>
+        <div class="form-group">
+            <label>Grado y Grupo:</label>
+            <input type="text" id="grado" placeholder="Ej. Multigrado 1º, 2º y 3º">
+        </div>
+        <div class="form-group">
+            <label>Temporalidad:</label>
+            <input type="text" id="tiempo" placeholder="Ej. 10 días">
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="form-group">
+            <label>Campo Formativo Principal:</label>
+            <select id="campo">
+                <option value="Lenguajes">🗣️ Lenguajes</option>
+                <option value="Saberes y Pensamiento Científico">🔬 Saberes y Pensamiento Científico</option>
+                <option value="Ética, Naturaleza y Sociedades">🌍 Ética, Naturaleza y Sociedades</option>
+                <option value="De lo Humano y lo Comunitario">🤝 De lo Humano y lo Comunitario</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Metodología Sociocrítica:</label>
+            <select id="metodologia">
+                <option value="Aprendizaje Basado en Proyectos Comunitarios">👥 Aprendizaje Basado en Proyectos Comunitarios</option>
+                <option value="Aprendizaje Basado en Indagación (STEAM)">🚀 Indagación bajo enfoque STEAM</option>
+                <option value="Aprendizaje Basado en Problemas (ABP)">🧩 Aprendizaje Basado en Problemas (ABP)</option>
+                <option value="Aprendizaje Servicio (AS)">❤️ Aprendizaje Servicio (AS)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Ejes Articuladores (Selecciona los que apliquen):</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.9rem;">
+            <label><input type="checkbox" name="ejes" value="Inclusión"> Inclusión</label>
+            <label><input type="checkbox" name="ejes" value="Pensamiento Crítico"> Pensamiento Crítico</label>
+            <label><input type="checkbox" name="ejes" value="Interculturalidad Crítica"> Interculturalidad Crítica</label>
+            <label><input type="checkbox" name="ejes" value="Igualdad de Género"> Igualdad de Género</label>
+            <label><input type="checkbox" name="ejes" value="Vida Saludable"> Vida Saludable</label>
+            <label><input type="checkbox" name="ejes" value="Apropiación de las culturas a través de la lectura y la escritura"> Apropiación de las culturas...</label>
+            <label><input type="checkbox" name="ejes" value="Artes y Experiencias Estéticas"> Artes y Experiencias Estéticas</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Contenido (NEM):</label>
+        <textarea id="contenido" placeholder="Escribe el contenido del programa sintético..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Procesos de Desarrollo de Aprendizaje (PDA):</label>
+        <textarea id="pda" placeholder="Escribe los PDA que vas a favorecer..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Secuencia Didáctica (Inicio, Desarrollo, Cierre):</label>
+        <textarea id="secuencia" style="height: 150px;" placeholder="Describe las actividades, juegos o dinámicas estructuradas..."></textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Estrategias de Evaluación Formativa y DUA:</label>
+        <textarea id="evaluacion" placeholder="Ej. Diarios de aprendizaje, rúbricas de observación, ajustes razonables..."></textarea>
+    </div>
+
+    <button onclick="generarPlaneacion()">✨ Generar Estructura Documental</button>
+
+    <!-- Sección que se genera dinámicamente -->
+    <div id="output">
+        <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+        <div id="print-area"></div>
+    </div>
+</div>
+
+<script>
+function generarPlaneacion() {
+    const docente = document.getElementById('docente').value;
+    const proyecto = document.getElementById('proyecto').value;
+    const grado = document.getElementById('grado').value;
+    const tiempo = document.getElementById('tiempo').value;
+    const campo = document.getElementById('campo').value;
+    const metodologia = document.getElementById('metodologia').value;
+    const contenido = document.getElementById('contenido').value;
+    const pda = document.getElementById('pda').value;
+    const secuencia = document.getElementById('secuencia').value;
+    const evaluacion = document.getElementById('evaluacion').value;
+
+    let ejesSeleccionados = [];
+    document.querySelectorAll('input[name="ejes"]:checked').forEach((checkbox) => {
+        ejesSeleccionados.push(checkbox.value);
+    });
+
+    const htmlResultado = `
+        <h2 style="text-align:center; text-transform:uppercase; margin-bottom:5px;">Formato Oficial de Planeación Didáctica</h2>
+        <p style="text-align:center; font-style:italic; margin-top:0;">Nueva Escuela Mexicana - Fase 2</p>
+        
+        <table class="header-table">
+            <tr>
+                <td><strong>Docente:</strong> \${docente}</td>
+                <td><strong>Proyecto:</strong> \${proyecto}</td>
+            </tr>
+            <tr>
+                <td><strong>Grado/Grupo:</strong> \${grado}</td>
+                <td><strong>Temporalidad:</strong> \${tiempo}</td>
+            </tr>
+            <tr>
+                <td><strong>Campo Formativo:</strong> \${campo}</td>
+                <td><strong>Metodología:</strong> \${metodologia}</td>
+            </tr>
+        </table>
+
+        <p><strong>🟢 Ejes Articuladores:</strong> \${ejesSeleccionados.join(', ') || 'Ninguno seleccionado'}</p>
+        <p><strong>📘 Contenido:</strong><br>\${contenido.replace(/\n/g, '<br>')}</p>
+        <p><strong>🎯 PDA:</strong><br>\${pda.replace(/\n/g, '<br>')}</p>
+        
+        <hr style="border: 1px solid #37474f;">
+        
+        <h3>👟 Secuencia de Actividades</h3>
+        <p>\${secuencia.replace(/\n/g, '<br>')}</p>
+        
+        <h3>🔍 Evaluación Formativa y Ajustes (DUA)</h3>
+        <p>\${evaluacion.replace(/\n/g, '<br>')}</p>
+    `;
+
+    document.getElementById('print-area').innerHTML = htmlResultado;
+    document.getElementById('output').style.display = 'block';
+    document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
