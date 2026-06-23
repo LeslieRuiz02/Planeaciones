@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creador de Planeaciones NEM Inteligente - Fase 2</title>
+    <title>Creador de Planeaciones NEM - Fase 2</title>
     <style>
         :root {
             --primary: #d81b60;
@@ -23,7 +23,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 950px;
             margin: 0 auto;
             background: var(--card-bg);
             padding: 30px;
@@ -71,6 +71,14 @@
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
+        }
+
+        .pass-box {
+            background-color: #f3e5f5;
+            border: 1px dashed var(--ai-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         .pda-container {
@@ -136,7 +144,13 @@
 <body>
 
 <div class="container">
-    <h1>📝 Planeador de Preescolar NEM Inteligente</h1>
+    <h1>📝 Diseñador Metodológico NEM (Preescolar)</h1>
+
+    <div class="pass-box">
+        <label style="color: var(--ai-color);">🔑 Acceso a Funciones de IA:</label>
+        <p style="margin: 5px 0; font-size: 0.85rem; color: #6a1b9a;">Ingresa la contraseña del aula para activar el redactor automático.</p>
+        <input type="password" id="claveAcceso" placeholder="Contraseña del sistema...">
+    </div>
     
     <div class="grid">
         <div class="form-group">
@@ -145,15 +159,15 @@
         </div>
         <div class="form-group">
             <label>Nombre del Proyecto / Situación:</label>
-            <input type="text" id="proyecto" placeholder="Ej. El gran libro de leyendas">
+            <input type="text" id="proyecto" placeholder="Ej. Detectives de figuras">
         </div>
         <div class="form-group">
             <label>Grado y Grupo:</label>
-            <input type="text" id="grado" placeholder="Ej. 2º A">
+            <input type="text" id="grado" placeholder="Ej. Multigrado">
         </div>
         <div class="form-group">
             <label>Temporalidad:</label>
-            <input type="text" id="tiempo" placeholder="Ej. 2 semanas">
+            <input type="text" id="tiempo" placeholder="Ej. 10 días">
         </div>
     </div>
 
@@ -216,20 +230,20 @@
         </div>
     </div>
 
-    <button type="button" class="btn-ai" onclick="generarConIA()">✨ Redactar Secuencias y Evaluación con IA</button>
-    <div id="loading">🔮 Pensando y estructurando tus actividades de preescolar según la NEM...</div>
+    <button type="button" class="btn-ai" onclick="generarConIA()">✨ Redactar Actividades y Evaluación con IA</button>
+    <div id="loading">🔮 La IA está estructurando tu propuesta lúdica para preescolar...</div>
 
     <div class="form-group" style="margin-top: 15px;">
         <label>Secuencia Didáctica (Inicio, Desarrollo, Cierre):</label>
-        <textarea id="secuencia" style="height: 150px;" placeholder="El resultado de la IA aparecerá aquí automáticamente..."></textarea>
+        <textarea id="secuencia" style="height: 150px;" placeholder="Las actividades sugeridas se redactarán aquí..."></textarea>
     </div>
 
     <div class="form-group">
         <label>Estrategias de Evaluación Formativa y Ajustes Razonables (DUA):</label>
-        <textarea id="evaluacion" style="height: 100px;" placeholder="Las sugerencias de evaluación y DUA aparecerán aquí..."></textarea>
+        <textarea id="evaluacion" style="height: 100px;" placeholder="Las sugerencias de evaluación formativa aparecerán aquí..."></textarea>
     </div>
 
-    <button type="button" class="btn-primary" onclick="imprimirFormato()">💾 Generar Formato Final de Planeación</button>
+    <button type="button" class="btn-primary" onclick="imprimirFormato()">💾 Generar Formato Final</button>
 
     <div id="output">
         <button style="background-color: var(--secondary); margin-bottom: 15px;" onclick="window.print()">🖨️ Guardar PDF / Imprimir</button>
@@ -238,23 +252,31 @@
 </div>
 
 <script>
+// Base de datos integrada con los contenidos oficiales del programa sintético
 const bancoDatos = {
     "Lenguajes": [
         { id: "L1", titulo: "Comunicación de necesidades, emociones, gustos, ideas y saberes, desde una perspectiva comunitaria.", pdas: ["1º - Expresa necesidades mediante gestos y sonidos.", "2º - Manifiesta ideas claras usando diversos lenguajes.", "3º - Expresa con precisión ideas ante sus pares."] },
         { id: "L2", titulo: "Narración de historias mediante diversos lenguajes y apropiación de la cultura escrita.", pdas: ["1º - Describe personajes de historias conocidas.", "2º - Narra historias inventadas con imágenes.", "3º - Cuenta mitos y leyendas con secuencia lógica."] },
-        { id: "L3", titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.", pdas: ["1º - Representa vivencias de forma corporal o plástica.", "2º - Elige colores y texturas para estados de ánimo.", "3º - Combina lenguajes artísticos para crear mundos."] }
+        { id: "L3", titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.", pdas: ["1º - Representa vivencias de forma corporal o plástica.", "2º - Elige colores y texturas para estados de ánimo.", "3º - Combina lenguajes artísticos para crear mundos."] },
+        { id: "L4", titulo: "Producciones gráficas dirigidas a diversos destinatarios, para establecer vínculos sociales.", pdas: ["1º - Produce trazos o dibujos con intención comunicativa.", "2º - Elabora recados o cartas con dictado al docente.", "3º - Planifica y organiza la escritura colectiva de textos."] }
     ],
     "Saberes y Pensamiento Científico": [
         { id: "S1", titulo: "Los saberes numéricos como herramienta para resolver situaciones del entorno.", pdas: ["1º - Dice los números en orden ascendente.", "2º - Cuenta colecciones fijas de elementos cotidianos.", "3º - Propone códigos numéricos para resolver juegos."] },
-        { id: "S2", titulo: "El dominio del espacio y reconocimiento de formas en el entorno.", pdas: ["1º - Usa referentes espaciales básicos para ubicarse.", "2º - Identifica formas geométricas en objetos reales.", "3º - Traza mapas y croquis simples del aula/comunidad."] }
+        { id: "S2", titulo: "El dominio del espacio y reconocimiento de formas en el entorno.", pdas: ["1º - Usa referentes espaciales básicos para ubicarse.", "2º - Identifica formas geométricas en objetos reales.", "3º - Traza mapas y croquis simples del aula/comunidad."] },
+        { id: "S3", titulo: "Características de los objetos, materiales del entorno y de los seres vivos.", pdas: ["1º - Clasifica materiales por tamaño o textura.", "2º - Hace preguntas sobre los animales y las plantas.", "3º - Experimenta y registra cambios en elementos naturales."] }
     ],
     "Ética, Naturaleza y Sociedades": [
-        { id: "E1", titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza.", pdas: ["1º - Manifiesta agrado al convivir al aire libre.", "2º - Propone soluciones al manejo de basura escolar.", "3º - Asume compromisos permanentes de cuidado ecológico."] }
+        { id: "E1", titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza.", pdas: ["1º - Manifiesta agrado al convivir al aire libre.", "2º - Propone soluciones al manejo de basura escolar.", "3º - Asume compromisos permanentes de cuidado ecológico."] },
+        { id: "E2", titulo: "Construcción de la identidad y pertenencia a una comunidad a partir de su historia y tradiciones.", pdas: ["1º - Narra costumbres de su núcleo familiar.", "2º - Participa con respeto en desfiles o festividades.", "3º - Conoce el origen de las leyendas e hitos locales."] }
     ],
     "De lo Humano y lo Comunitario": [
-        { id: "H1", titulo: "Construcción de la identidad personal y cuidado de sí.", pdas: ["1º - Nombra sus cualidades físicas básicas.", "2º - Distingue lo que puede hacer solo o con ayuda.", "3º - Expresa orgullo por sus raíces comunitarias."] }
+        { id: "H1", titulo: "Construcción de la identidad personal y cuidado de sí.", pdas: ["1º - Nombra sus cualidades físicas básicas.", "2º - Distingue lo que puede hacer solo o con ayuda.", "3º - Expresa orgullo por sus raíces comunitarias."] },
+        { id: "H2", titulo: "Medidas de prevención de accidentes y situaciones de riesgo.", pdas: ["1º - Reconoce áreas de riesgo en casa y escuela.", "2º - Atiende reglas de seguridad ante emergencias.", "3º - Diseña y lee señalamientos de protección civil."] }
     ]
 };
+
+// 🔴 ¡Pega aquí tu clave real de Gemini! Así tus usuarios no la verán directamente en el cuadro de texto.
+const LLAVE_INTERNA_OCULTA = "AIzaSyD_TU_API_KEY_REAL_AQUI"; 
 
 function actualizarContenidos() {
     const campo = document.getElementById('campo').value;
@@ -292,9 +314,17 @@ function actualizarPDAs() {
 }
 
 async function generarConIA() {
+    const passIngresada = document.getElementById('claveAcceso').value;
+    
+    // Aquí defines la contraseña fácil que usarán las maestras
+    if(passIngresada !== "PREESCOLAR2026") { 
+        alert('Contraseña del sistema incorrecta. Solicítala con la administradora.'); 
+        return; 
+    }
+    
     const campo = document.getElementById('campo').value;
     const contenidoSel = document.getElementById('contenido').value;
-    if(!campo || !contenidoSel) { alert('Por favor, selecciona campo y contenido primero.'); return; }
+    if(!campo || !contenidoSel) { alert('Por favor, selecciona un campo y un contenido primero.'); return; }
     
     const contenido = bancoDatos[campo].find(c => c.id === contenidoSel).titulo;
     let pdas = [];
@@ -304,26 +334,25 @@ async function generarConIA() {
 
     document.getElementById('loading').style.display = 'block';
 
+    const promptText = `Actúa como asesor experto en la NEM y educación preescolar. 
+    Desarrolla el proyecto "${proyecto}" con la metodología "${met}". Campo: ${campo}. Contenido: ${contenido}. PDA: ${pdas.join(', ')}.
+    Entrega el plan dividido exclusivamente por un guion largo "---": la primera parte con la secuencia didáctica lúdica (Inicio, Desarrollo, Cierre) y la segunda con estrategias de evaluación formativa y ajustes DUA.`;
+
     try {
-        // Conexión directa a un servicio intermediario que procesa la IA de manera transparente
-        const response = await fetch('https://tu-servidor-intermedio.com/api/generar-planeacion', {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${LLAVE_INTERNA_OCULTA}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                proyecto: proyecto,
-                metodologia: met,
-                campo: campo,
-                contenido: contenido,
-                pdas: pdas
-            })
+            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
         });
         
         const data = await response.json();
-        
-        document.getElementById('secuencia').value = data.secuenciaDidactica;
-        document.getElementById('evaluacion').value = data.evaluacionDUA;
+        const textResult = data.candidates[0].content.parts[0].text;
+        const partes = textResult.split('---');
+
+        document.getElementById('secuencia').value = partes[0] ? partes[0].trim() : textResult;
+        document.getElementById('evaluacion').value = partes[1] ? partes[1].trim() : 'Revisar sugerencias del sistema.';
     } catch (error) {
-        alert('Hubo un problema al procesar con la Inteligencia Artificial. Inténtalo de nuevo.');
+        alert('Error al conectar con la IA. Verifica que la API Key interna sea válida.');
         console.error(error);
     } finally {
         document.getElementById('loading').style.display = 'none';
@@ -336,7 +365,7 @@ function imprimirFormato() {
             <tr><td><strong>Docente:</strong> ${document.getElementById('docente').value}</td><td><strong>Proyecto:</strong> ${document.getElementById('proyecto').value}</td></tr>
             <tr><td><strong>Metodología:</strong> ${document.getElementById('metodologia').value}</td><td><strong>Modalidad:</strong> ${document.getElementById('modalidad').value}</td></tr>
         </table>
-        <p><strong>📘 Contenido:</strong> ${document.getElementById('campo').value}</p>
+        <p><strong>📘 Campo Formativo:</strong> ${document.getElementById('campo').value}</p>
         <p><strong>👟 Actividades:</strong><br>${document.getElementById('secuencia').value.replace(/\n/g, '<br>')}</p>
         <p><strong>🔍 Evaluación / DUA:</strong><br>${document.getElementById('evaluacion').value.replace(/\n/g, '<br>')}</p>`;
     
