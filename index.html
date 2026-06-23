@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creador de Planeaciones NEM - Fase 2 (Preescolar)</title>
+    <title>Creador de Planeaciones NEM Inteligente - Fase 2</title>
     <style>
         :root {
-            --primary: #d81b60; /* Rosa mexicano */
-            --secondary: #1e88e5; /* Azul claro */
-            --background: #fdf6f0; /* Fondo cálido claro */
+            --primary: #d81b60;
+            --secondary: #1e88e5;
+            --ai-color: #8e24aa;
+            --background: #fdf6f0;
             --card-bg: #ffffff;
             --text: #37474f;
         }
@@ -22,7 +23,7 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 1000px;
             margin: 0 auto;
             background: var(--card-bg);
             padding: 30px;
@@ -66,60 +67,18 @@
             border-radius: 8px;
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.3s;
         }
 
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
         }
 
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 25px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #c2185b;
-        }
-
-        #output {
-            margin-top: 30px;
-            padding: 25px;
-            border: 2px solid #37474f;
-            background: #fff;
+        .api-box {
+            background-color: #ede7f6;
+            border: 1px dashed var(--ai-color);
+            padding: 15px;
             border-radius: 10px;
-            display: none;
-        }
-
-        .print-btn {
-            background-color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        .print-btn:hover { background-color: #1565c0; }
-
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
             margin-bottom: 20px;
-        }
-        .header-table td {
-            border: 1px solid #37474f;
-            padding: 8px;
         }
 
         .pda-container {
@@ -127,7 +86,6 @@
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #cfd8dc;
-            margin-top: 5px;
             max-height: 200px;
             overflow-y: auto;
         }
@@ -139,16 +97,60 @@
             align-items: flex-start;
         }
 
-        .pda-item input {
-            margin-right: 8px;
-            margin-top: 4px;
+        .pda-item input { margin-right: 8px; margin-top: 4px; }
+
+        button {
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: opacity 0.3s;
         }
+
+        .btn-primary { background-color: var(--primary); }
+        .btn-ai { background-color: var(--ai-color); }
+        button:hover { opacity: 0.9; }
+
+        #loading {
+            display: none;
+            text-align: center;
+            color: var(--ai-color);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        #output {
+            margin-top: 30px;
+            padding: 25px;
+            border: 2px solid #37474f;
+            background: #fff;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .header-table td { border: 1px solid #37474f; padding: 8px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📝 Generador de Planeaciones NEM (Preescolar - Fase 2)</h1>
+    <h1>📝 Planeador de Preescolar NEM con Inteligencia Artificial</h1>
+
+    <div class="api-box">
+        <label style="color: var(--ai-color);">🔑 Configuración de Inteligencia Artificial:</label>
+        <p style="margin: 5px 0; font-size: 0.85rem; color: #5e35b1;">Para usar el generador automático, ingresa tu API Key de Google Gemini. (Es gratuita desde Google AI Studio).</p>
+        <input type="password" id="apiKey" placeholder="Pega aquí tu API Key (AIzaSy...)">
+    </div>
     
     <div class="grid">
         <div class="form-group">
@@ -157,15 +159,15 @@
         </div>
         <div class="form-group">
             <label>Nombre del Proyecto / Situación:</label>
-            <input type="text" id="proyecto" placeholder="Ej. Detectives de figuras">
+            <input type="text" id="proyecto" placeholder="Ej. El gran libro de leyendas">
         </div>
         <div class="form-group">
             <label>Grado y Grupo:</label>
-            <input type="text" id="grado" placeholder="Ej. Multigrado 1º, 2º y 3º">
+            <input type="text" id="grado" placeholder="Ej. 2º A">
         </div>
         <div class="form-group">
             <label>Temporalidad:</label>
-            <input type="text" id="tiempo" placeholder="Ej. 10 días">
+            <input type="text" id="tiempo" placeholder="Ej. 2 semanas">
         </div>
     </div>
 
@@ -189,9 +191,9 @@
     </div>
 
     <div class="form-group">
-        <label>Procesos de Desarrollo de Aprendizaje (PDA) sugeridos (Selecciona los que usarás):</label>
+        <label>Procesos de Desarrollo de Aprendizaje (PDA):</label>
         <div id="pda-list" class="pda-container">
-            <span style="color: #757575; font-style: italic;">Selecciona un contenido para cargar sus PDA...</span>
+            <span style="color: #757575; font-style: italic;">Selecciona un contenido...</span>
         </div>
     </div>
 
@@ -201,8 +203,7 @@
             <select id="modalidad">
                 <option value="Proyecto Didáctico">📂 Proyecto Didáctico (NEM)</option>
                 <option value="Secuencia Didáctica Específica">🧩 Secuencia Didáctica Específica</option>
-                <option value="Actividades Permanentes / Rutinas">⏰ Actividades Permanentes / del Aula</option>
-                <option value="Taller / Rincones de aprendizaje">🎨 Taller o Rincones de Trabajo</option>
+                <option value="Actividades Permanentes">⏰ Actividades Permanentes / Rutinas</option>
             </select>
         </div>
         <div class="form-group">
@@ -212,282 +213,161 @@
                 <option value="Aprendizaje Basado en Indagación (STEAM)">🚀 Indagación bajo enfoque STEAM</option>
                 <option value="Aprendizaje Basado en Problemas (ABP)">🧩 Aprendizaje Basado en Problemas (ABP)</option>
                 <option value="Aprendizaje Servicio (AS)">❤️ Aprendizaje Servicio (AS)</option>
-                <option value="No aplica / Enfoque disciplinar integrado">⚪ No aplica (Para secuencias o actividades permanentes)</option>
+                <option value="Enfoque integrado (Sin metodología sociocrítica)">⚪ Secuencia Integrada</option>
             </select>
         </div>
     </div>
 
     <div class="form-group">
-        <label>Ejes Articuladores (Selecciona los que apliquen):</label>
+        <label>Ejes Articuladores (Selecciona los necesarios):</label>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.9rem;">
             <label><input type="checkbox" name="ejes" value="Inclusión"> Inclusión</label>
             <label><input type="checkbox" name="ejes" value="Pensamiento Crítico"> Pensamiento Crítico</label>
             <label><input type="checkbox" name="ejes" value="Interculturalidad Crítica"> Interculturalidad Crítica</label>
             <label><input type="checkbox" name="ejes" value="Igualdad de Género"> Igualdad de Género</label>
             <label><input type="checkbox" name="ejes" value="Vida Saludable"> Vida Saludable</label>
-            <label><input type="checkbox" name="ejes" value="Apropiación de las culturas a través de la lectura y la escritura"> Apropiación de las culturas...</label>
             <label><input type="checkbox" name="ejes" value="Artes y Experiencias Estéticas"> Artes y Experiencias Estéticas</label>
         </div>
     </div>
 
-    <div class="form-group">
+    <button type="button" class="btn-ai" onclick="generarConIA()">✨ Redactar Secuencias y Evaluación con IA</button>
+    <div id="loading">🔮 Pensando y estructurando tus actividades de preescolar según la NEM...</div>
+
+    <div class="form-group" style="margin-top: 15px;">
         <label>Secuencia Didáctica (Inicio, Desarrollo, Cierre):</label>
-        <textarea id="secuencia" style="height: 120px;" placeholder="Describe las actividades paso a paso..."></textarea>
+        <textarea id="secuencia" style="height: 150px;" placeholder="Aquí aparecerá el resultado de la IA o puedes escribir manualmente..."></textarea>
     </div>
 
     <div class="form-group">
         <label>Estrategias de Evaluación Formativa y Ajustes Razonables (DUA):</label>
-        <textarea id="evaluacion" placeholder="Ej. Observación directa, diario de aula, apoyos visuales, materiales de relieve..."></textarea>
+        <textarea id="evaluacion" style="height: 100px;" placeholder="Aquí aparecerán las estrategias DUA y evaluación de la IA..."></textarea>
     </div>
 
-    <button onclick="generarPlaneacion()">✨ Generar Estructura Documental</button>
+    <button type="button" class="btn-primary" onclick="imprimirFormato()">💾 Generar Formato Final de Planeación</button>
 
     <div id="output">
-        <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Guardar en PDF</button>
+        <button style="background-color: var(--secondary); margin-bottom: 15px;" onclick="window.print()">🖨️ Guardar PDF / Imprimir</button>
         <div id="print-area"></div>
     </div>
 </div>
 
 <script>
-// Banco de datos oficial para la Fase 2 (Preescolar)
+// Base de datos oficial ampliada para la Fase 2 de Preescolar
 const bancoDatos = {
     "Lenguajes": [
-        {
-            id: "L1",
-            titulo: "Comunicación de necesidades, emociones, gustos, ideas y saberes, a través de los diversos lenguajes, desde una perspectiva comunitaria.",
-            pdas: [
-                "1º - Emplea palabras, gestos, señas, imágenes, sonidos o movimientos corporales que aprende en su comunidad, para expresar necesidades, ideas, emociones y gustos.",
-                "2º - Manifiesta de manera clara necesidades, emociones, gustos, preferencias e ideas, que construye en la convivencia diaria, dándose a entender usando distintos lenguajes.",
-                "3º - Expresa con claridad y precisión sus ideas, necesidades, intereses y gustos ante sus pares y otras personas, usando lenguajes verbales y no verbales."
-            ]
-        },
-        {
-            id: "L2",
-            titulo: "Narración de historias mediante diversos lenguajes, en un ambiente donde niñas y niños participen y se apropien de la cultura escrita.",
-            pdas: [
-                "1º - Describe lugares o personajes de las historias o leyendas que conoce y escucha contar.",
-                "2º - Narra historias que inventa de manera individual o colectiva a partir de imágenes o situaciones cotidianas.",
-                "3º - Narra con secuencia lógica historias, leyendas, cuentos, fábulas o mitos de su comunidad, incorporando nuevos recursos de los lenguajes."
-            ]
-        },
-        {
-            id: "L3",
-            titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.",
-            pdas: [
-                "1º - Representa emociones y experiencias de manera gráfica, plástica, musical o corporal.",
-                "2º - Elige materiales, colores, texturas o movimientos para expresar plásticamente sus emociones y estados de ánimo.",
-                "3º - Combina diversos lenguajes artísticos para representar situaciones, vivencias, emociones o mundos imaginarios."
-            ]
-        }
+        { id: "L1", titulo: "Comunicación de necesidades, emociones, gustos, ideas y saberes, desde una perspectiva comunitaria.", pdas: ["1º - Expresa necesidades mediante gestos y sonidos.", "2º - Manifiesta ideas claras usando diversos lenguajes.", "3º - Expresa con precisión ideas ante sus pares."] },
+        { id: "L2", titulo: "Narración de historias mediante diversos lenguajes y apropiación de la cultura escrita.", pdas: ["1º - Describe personajes de historias conocidas.", "2º - Narra historias inventadas con imágenes.", "3º - Cuenta mitos y leyendas con secuencia lógica."] },
+        { id: "L3", titulo: "Expresión de emociones y experiencias a través de los lenguajes artísticos.", pdas: ["1º - Representa vivencias de forma corporal o plástica.", "2º - Elige colores y texturas para estados de ánimo.", "3º - Combina lenguajes artísticos para crear mundos."] },
+        { id: "L4", titulo: "Producciones gráficas dirigidas a diversos destinatarios, para establecer vínculos sociales.", pdas: ["1º - Produce trazos o dibujos con intención comunicativa.", "2º - Elabora recados o cartas con dictado al docente.", "3º - Planifica y organiza la escritura colectiva de textos."] }
     ],
     "Saberes y Pensamiento Científico": [
-        {
-            id: "S1",
-            titulo: "Los saberes numéricos como herramienta para resolver situaciones del entorno, en diversos contextos socioculturales.",
-            pdas: [
-                "1º - Dice en orden los números que conoce y amplía gradualmente su rango de conteo.",
-                "2º - Cuenta objetos y elementos de su entorno en su lengua materna con diversos propósitos; compara colecciones.",
-                "3º - Propone códigos personales o usa números para registrar datos, resolver problemas matemáticos de su entorno y juegos cotidianos."
-            ]
-        },
-        {
-            id: "S2",
-            titulo: "El dominio del espacio y reconocimiento de formas en el entorno desde diversos puntos de observación.",
-            pdas: [
-                "1º - Usa el espacio inmediato al desplazarse y ubicar objetos o personas usando términos de ubicación.",
-                "2º - Reconoce semejanzas y diferencias entre objetos y figuras geométricas, explora sus propiedades.",
-                "3º - Expresa la posición y ubicación de objetos y personas con respecto a un sistema de referencia escolar o comunitario."
-            ]
-        },
-        {
-            id: "S3",
-            titulo: "Características de los objetos y materiales de su entorno, y de los seres vivos.",
-            pdas: [
-                "1º - Observa y compara características de objetos de su entorno (peso, color, tamaño, textura).",
-                "2º - Describe características de los seres vivos y fenómenos naturales observados, hace preguntas sobre ellos.",
-                "3º - Planifica y realiza experimentos simples para responder preguntas, registrar información y contrastar ideas."
-            ]
-        }
+        { id: "S1", titulo: "Los saberes numéricos como herramienta para resolver situaciones del entorno.", pdas: ["1º - Dice los números en orden ascendente.", "2º - Cuenta colecciones fijas de elementos cotidianos.", "3º - Propone códigos numéricos para resolver juegos."] },
+        { id: "S2", titulo: "El dominio del espacio y reconocimiento de formas en el entorno.", pdas: ["1º - Usa referentes espaciales básicos para ubicarse.", "2º - Identifica formas geométricas en objetos reales.", "3º - Traza mapas y croquis simples del aula/comunidad."] },
+        { id: "S3", titulo: "Características de los objetos, materiales del entorno y de los seres vivos.", pdas: ["1º - Clasifica materiales por tamaño o textura.", "2º - Hace preguntas sobre los animales y las plantas.", "3º - Experimenta y registra cambios en elementos naturales."] }
     ],
     "Ética, Naturaleza y Sociedades": [
-        {
-            id: "E1",
-            titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza, que favorece la construcción de una conciencia socioambiental.",
-            pdas: [
-                "1º - Convive con la naturaleza y expresa lo que percibe y siente de ella.",
-                "2º - Identifica problemas ambientales de su escuela o comunidad y propone acciones cooperativas para el cuidado de la naturaleza.",
-                "3º - Manifiesta actitudes de cuidado y empatía hacia los seres vivos, asume compromisos para preservar el medio ambiente."
-            ]
-        },
-        {
-            id: "E2",
-            titulo: "Construcción de la identidad y pertenencia a una comunidad y país a partir del conocimiento de su historia, celebraciones y tradiciones.",
-            pdas: [
-                "1º - Comparte con sus pares historias familiares, fotografías u objetos significativos de su origen.",
-                "2º - Participa en celebraciones y tradiciones de su comunidad, reconociendo elementos culturales propios.",
-                "3º - Explica el significado de conmemoraciones, símbolos patrios, monumentos históricos y mitos/leyendas de su entorno."
-            ]
-        }
+        { id: "E1", titulo: "Interacción, cuidado, conservación y regeneración de la naturaleza.", pdas: ["1º - Manifiesta agrado al convivir al aire libre.", "2º - Propone soluciones al manejo de basura escolar.", "3º - Asume compromisos permanentes de cuidado ecológico."] },
+        { id: "E2", titulo: "Construcción de la identidad y pertenencia a una comunidad a partir de su historia y tradiciones.", pdas: ["1º - Narra costumbres de su núcleo familiar.", "2º - Participa con respeto en desfiles o festividades.", "3º - Conoce el origen de las leyendas e hitos locales."] }
     ],
     "De lo Humano y lo Comunitario": [
-        {
-            id: "H1",
-            titulo: "Construcción de la identidad personal a partir de su origen, sociocultural, el cuidado de sí y el desarrollo de sus potencialidades.",
-            pdas: [
-                "1º - Describe sus características físicas, cualidades e intereses que lo identifican.",
-                "2º - Reconoce cambios en sus capacidades, gustos y formas de pensar al interactuar con otros.",
-                "3º - Valora sus raíces culturales, reconoce su historia personal y familiar como parte de su identidad."
-            ]
-        },
-        {
-            id: "H2",
-            titulo: "Medidas de prevención de accidentes y situaciones de riesgo de acuerdo con el contexto, para el cuidado de la integridad personal y colectiva.",
-            pdas: [
-                "1º - Explora los espacios de la escuela y el hogar para identificar zonas o situaciones de riesgo.",
-                "2º - Propone y practica acciones de seguridad y prevención ante riesgos cotidianos o fenómenos naturales.",
-                "3º - Colabora en el diseño de señalizaciones y dinámicas de prevención (simulacros, zonas seguras) en su escuela y comunidad."
-            ]
-        }
+        { id: "H1", titulo: "Construcción de la identidad personal y cuidado de sí.", pdas: ["1º - Nombra sus cualidades físicas básicas.", "2º - Distingue lo que puede hacer solo o con ayuda.", "3º - Expresa orgullo por sus raíces comunitarias."] },
+        { id: "H2", titulo: "Medidas de prevención de accidentes y situaciones de riesgo.", pdas: ["1º - Reconoce áreas de riesgo en casa y escuela.", "2º - Atiende reglas de seguridad ante emergencias.", "3º - Diseña y lee señalamientos de protección civil."] }
     ]
 };
 
 function actualizarContenidos() {
-    const campoSel = document.getElementById('campo').value;
-    const contenidoSel = document.getElementById('contenido');
-    const pdaList = document.getElementById('pda-list');
+    const campo = document.getElementById('campo').value;
+    const conSel = document.getElementById('contenido');
+    conSel.innerHTML = '<option value="">-- Selecciona un Contenido --</option>';
+    document.getElementById('pda-list').innerHTML = '<span style="font-style: italic;">Selecciona un contenido...</span>';
     
-    contenidoSel.innerHTML = '<option value="">-- Selecciona un Contenido --</option>';
-    pdaList.innerHTML = '<span style="color: #757575; font-style: italic;">Selecciona un contenido para cargar sus PDA...</span>';
+    if(!campo) { conSel.disabled = true; return; }
+    conSel.disabled = false;
     
-    if (!campoSel) {
-        contenidoSel.disabled = true;
-        return;
-    }
-    
-    contenidoSel.disabled = false;
-    const contenidos = bancoDatos[campoSel] || [];
-    
-    contenidos.forEach(cont => {
-        const opt = document.createElement('option');
-        opt.value = cont.id;
-        opt.textContent = cont.titulo.substring(0, 75) + '...';
-        contenidoSel.appendChild(opt);
+    bancoDatos[campo].forEach(c => {
+        let opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.titulo.substring(0, 80) + '...';
+        conSel.appendChild(opt);
     });
 }
 
 function actualizarPDAs() {
-    const campoSel = document.getElementById('campo').value;
-    const contenidoId = document.getElementById('contenido').value;
-    const pdaList = document.getElementById('pda-list');
+    const campo = document.getElementById('campo').value;
+    const id = document.getElementById('contenido').value;
+    const container = document.getElementById('pda-list');
+    container.innerHTML = '';
     
-    pdaList.innerHTML = '';
+    if(!id) return;
+    const objeto = bancoDatos[campo].find(c => c.id === id);
     
-    if (!contenidoId) {
-        pdaList.innerHTML = '<span style="color: #757575; font-style: italic;">Selecciona un contenido para cargar sus PDA...</span>';
-        return;
-    }
+    objeto.pdas.forEach((p, i) => {
+        container.innerHTML += `
+            <div class="pda-item">
+                <input type="checkbox" name="pda_chk" value="${p}" id="p_${i}">
+                <label for="p_${i}">${p}</label>
+            </div>`;
+    });
+}
+
+async function generarConIA() {
+    const apiKey = document.getElementById('apiKey').value;
+    if(!apiKey) { alert('Por favor, ingresa una API Key válida.'); return; }
     
-    const contenidos = bancoDatos[campoSel] || [];
-    const contenidoEncontrado = contenidos.find(c => c.id === contenidoId);
+    const campo = document.getElementById('campo').value;
+    const contenidoSel = document.getElementById('contenido').value;
+    if(!campo || !contenidoSel) { alert('Selecciona campo y contenido.'); return; }
     
-    if (contenidoEncontrado) {
-        contenidoEncontrado.pdas.forEach((pda, index) => {
-            const item = document.createElement('div');
-            item.className = 'pda-item';
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.name = 'pdas_selected';
-            checkbox.value = pda;
-            checkbox.id = `pda_${index}`;
-            
-            const label = document.createElement('label');
-            label.htmlFor = `pda_${index}`;
-            label.style.fontWeight = 'normal';
-            label.style.cursor = 'pointer';
-            label.textContent = pda;
-            
-            item.appendChild(checkbox);
-            item.appendChild(label);
-            pdaList.appendChild(item);
+    const contenido = bancoDatos[campo].find(c => c.id === contenidoSel).titulo;
+    let pdas = [];
+    document.querySelectorAll('input[name="pda_chk"]:checked').forEach(c => pdas.push(c.value));
+    const met = document.getElementById('metodologia').value;
+    const proyecto = document.getElementById('proyecto').value || 'un tema de preescolar';
+
+    document.getElementById('loading').style.display = 'block';
+
+    const promptText = `Eres un asesor metodológico experto en la Nueva Escuela Mexicana (NEM) y educación preescolar (Fase 2). 
+    Diseña para el proyecto titulado "${proyecto}" con la metodología "${met}". 
+    Campo: ${campo}. Contenido: ${contenido}. PDA seleccionados: ${pdas.join(', ')}.
+    
+    Entrega exclusivamente dos secciones separadas por la palabra "---":
+    Sección 1: Una secuencia didáctica lúdica detallada organizada en Inicio, Desarrollo y Cierre, adecuada para niños de jardín de niños.
+    Sección 2: Estrategias de evaluación formativa y ajustes razonables aplicando el Diseño Universal para el Aprendizaje (DUA).`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
         });
+        
+        const data = await response.json();
+        const textResult = data.candidates[0].content.parts[0].text;
+        const partes = textResult.split('---');
+
+        document.getElementById('secuencia').value = partes[0] ? partes[0].trim() : textResult;
+        document.getElementById('evaluacion').value = partes[1] ? partes[1].trim() : 'Revisar evaluación sugerida.';
+    } catch (error) {
+        alert('Hubo un error al conectar con la IA. Verifica tu API Key.');
+        console.error(error);
+    } finally {
+        document.getElementById('loading').style.display = 'none';
     }
 }
 
-function generarPlaneacion() {
-    const docente = document.getElementById('docente').value;
-    const proyecto = document.getElementById('proyecto').value;
-    const grado = document.getElementById('grado').value;
-    const tiempo = document.getElementById('tiempo').value;
-    const campo = document.getElementById('campo').value;
-    const contenidoId = document.getElementById('contenido').value;
-    const modalidad = document.getElementById('modalidat' ? 'modalidad' : 'modalidad').value;
-    const metodologia = document.getElementById('metodologia').value;
-    const secuencia = document.getElementById('secuencia').value;
-    const evaluacion = document.getElementById('evaluacion').value;
-
-    if (!campo || !contenidoId) {
-        alert('Por favor, selecciona un Campo Formativo y un Contenido.');
-        return;
-    }
-
-    const contenidos = bancoDatos[campo] || [];
-    const contenidoTexto = contenidos.find(c => c.id === contenidoId).titulo;
-
-    let pdasSeleccionados = [];
-    document.querySelectorAll('input[name="pdas_selected"]:checked').forEach((cb) => {
-        pdasSeleccionados.push(cb.value);
-    });
-
-    let ejesSeleccionados = [];
-    document.querySelectorAll('input[name="ejes"]:checked').forEach((checkbox) => {
-        ejesSeleccionados.push(checkbox.value);
-    });
-
-    const htmlResultado = `
-        <h2 style="text-align:center; text-transform:uppercase; margin-bottom:5px; color:#2c3e50;">Formato Oficial de Planeación Didáctica</h2>
-        <p style="text-align:center; font-style:italic; margin-top:0; color:#7f8c8d;">Nueva Escuela Mexicana - Fase 2 (Preescolar)</p>
-        
+function imprimirFormato() {
+    const html = `
         <table class="header-table">
-            <tr>
-                <td style="width: 50%;"><strong>Docente:</strong> ${docente || 'No especificado'}</td>
-                <td style="width: 50%;"><strong>Proyecto / Situación:</strong> ${proyecto || 'No especificado'}</td>
-            </tr>
-            <tr>
-                <td><strong>Grado/Grupo:</strong> ${grado || 'No especificado'}</td>
-                <td><strong>Temporalidad:</strong> ${tiempo || 'No especificado'}</td>
-            </tr>
-            <tr>
-                <td><strong>Modalidad de Trabajo:</strong> ${modalidad}</td>
-                <td><strong>Metodología:</strong> ${metodologia}</td>
-            </tr>
+            <tr><td><strong>Docente:</strong> ${document.getElementById('docente').value}</td><td><strong>Proyecto:</strong> ${document.getElementById('proyecto').value}</td></tr>
+            <tr><td><strong>Metodología:</strong> ${document.getElementById('metodologia').value}</td><td><strong>Modalidad:</strong> ${document.getElementById('modalidad').value}</td></tr>
         </table>
-
-        <p style="margin-bottom: 8px;"><strong>🟢 Campo Formativo:</strong> ${campo}</p>
-        <p style="margin-bottom: 8px;"><strong>🎨 Ejes Articuladores:</strong> ${ejesSeleccionados.join(', ') || 'Ninguno seleccionado'}</p>
-        <p style="margin-bottom: 8px;"><strong>📘 Contenido Programático:</strong> ${contenidoTexto}</p>
-        
-        <div style="margin-top: 10px; margin-bottom: 15px;">
-            <strong>🎯 Procesos de Desarrollo de Aprendizaje (PDA) seleccionados:</strong>
-            <ul style="margin-top: 5px; padding-left: 20px;">
-                ${pdasSeleccionados.map(p => `<li>${p}</li>`).join('') || '<li style="color:red;">Ningún PDA seleccionado</li>'}
-            </ul>
-        </div>
-        
-        <hr style="border: 1px solid #37474f; margin-top:20px;">
-        
-        <h3 style="color:#2c3e50; margin-bottom:5px;">👟 Secuencia de Actividades (Inicio, Desarrollo, Cierre)</h3>
-        <p style="white-space: pre-line; background: #fafafa; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">${secuencia || 'Sin actividades descritas.'}</p>
-        
-        <h3 style="color:#2c3e50; margin-bottom:5px;">🔍 Evaluación Formativa y Ajustes Razonables (DUA)</h3>
-        <p style="white-space: pre-line; background: #fafafa; padding: 12px; border-radius: 6px; border: 1px solid #e0e0e0;">${evaluacion || 'Sin estrategias de evaluación o ajustes DUA descritos.'}</p>
-    `;
-
-    document.getElementById('print-area').innerHTML = htmlResultado;
+        <p><strong>📘 Contenido:</strong> ${document.getElementById('campo').value}</p>
+        <p><strong>👟 Actividades:</strong><br>${document.getElementById('secuencia').value.replace(/\n/g, '<br>')}</p>
+        <p><strong>🔍 Evaluación / DUA:</strong><br>${document.getElementById('evaluacion').value.replace(/\n/g, '<br>')}</p>`;
+    
+    document.getElementById('print-area').innerHTML = html;
     document.getElementById('output').style.display = 'block';
-    document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
 }
 </script>
-
 </body>
 </html>
